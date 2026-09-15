@@ -16,6 +16,9 @@ abstract final class AppColors {
   static const neutral700 = Color(0xFF3D4957);
   static const neutral900 = Color(0xFF17202A);
 
+  static const info100 = Color(0xFFE3F2FD);
+  static const info700 = Color(0xFF155A8A);
+
   static const warning100 = Color(0xFFFFF0C2);
   static const warning700 = Color(0xFFB76800);
   static const warning900 = Color(0xFF663900);
@@ -26,4 +29,5 @@ abstract final class AppColors {
   static const surface = Colors.white;
   static const textPrimary = secondary700;
   static const textSecondary = neutral700;
+  static const captureMenuScrim = Color(0xA3000449);
 }
