@@ -1,10 +1,12 @@
 import 'package:fakto_mobile/design/app_colors.dart';
 import 'package:fakto_mobile/design/widgets/fakto_bottom_navigation_bar.dart';
 import 'package:fakto_mobile/design/widgets/fakto_reminder_card.dart';
+import 'package:fakto_mobile/features/capture/presentation/camera_capture_page.dart';
 import 'package:fakto_mobile/features/capture/presentation/widgets/capture_menu_overlay.dart';
 import 'package:fakto_mobile/features/home/presentation/widgets/monthly_summary_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -102,9 +104,13 @@ class _HomePageState extends State<HomePage>
             child: CaptureMenuOverlay(
               animation: _captureMenuController,
               isClosing: _isCaptureMenuClosing,
-              onDismiss: _closeCaptureMenu,
+              onDismiss: () {
+                _dismissCaptureMenu();
+              },
               onRecordAudio: _simulateRecordAudio,
-              onTakePhoto: _simulateTakePhoto,
+              onTakePhoto: () {
+                _goToCamera();
+              },
             ),
           ),
       ],
@@ -126,7 +132,7 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  Future<void> _closeCaptureMenu() async {
+  Future<void> _dismissCaptureMenu() async {
     if (!_isCaptureMenuMounted || _isCaptureMenuClosing) return;
 
     setState(() => _isCaptureMenuClosing = true);
@@ -145,10 +151,13 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  Future<void> _goToCamera() async {
+    await _dismissCaptureMenu();
+    if (mounted) context.go(CameraCapturePage.routePath);
+  }
+
   bool get _prefersReducedMotion =>
       MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
   void _simulateRecordAudio() {}
-
-  void _simulateTakePhoto() {}
 }
