@@ -47,88 +47,92 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
-  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
-    value: const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: AppColors.surface,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-    child: Stack(
-      children: <Widget>[
-        Scaffold(
-          body: SafeArea(
-            bottom: false,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Hola, Claudia',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 24),
-                  MonthlySummaryCard(
-                    summary: FaktoAppScope.of(context).monthlySummary,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Recordatorios',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  const FaktoReminderCard(
-                    key: Key('epm-reminder-card'),
-                    dueLabel: 'Vence mañana',
-                    serviceName: 'EPM',
-                    amount: r'$ 800.000',
-                    isUrgent: true,
-                  ),
-                  const SizedBox(height: 16),
-                  const FaktoReminderCard(
-                    key: Key('administration-reminder-card'),
-                    dueLabel: 'En 2 días',
-                    serviceName: 'Administración',
-                    amount: r'$ 450.000',
-                  ),
-                  if (FaktoAppScope.of(context).capturedReminder
-                      case final Reminder capturedReminder) ...<Widget>[
-                    const SizedBox(height: 16),
-                    FaktoReminderCard(
-                      key: const Key('captured-reminder-card'),
-                      dueLabel: _formatDueLabel(capturedReminder.dueDate),
-                      serviceName: capturedReminder.issuer,
-                      amount: formatPesos(capturedReminder.amountCents),
+  Widget build(BuildContext context) => PopScope(
+    canPop: !_isCaptureMenuMounted,
+    onPopInvokedWithResult: _handleSystemBack,
+    child: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: AppColors.surface,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+      child: Stack(
+        children: <Widget>[
+          Scaffold(
+            body: SafeArea(
+              bottom: false,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Hola, Claudia',
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
+                    const SizedBox(height: 24),
+                    MonthlySummaryCard(
+                      summary: FaktoAppScope.of(context).monthlySummary,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Recordatorios',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 16),
+                    const FaktoReminderCard(
+                      key: Key('epm-reminder-card'),
+                      dueLabel: 'Vence mañana',
+                      serviceName: 'EPM',
+                      amount: r'$ 800.000',
+                      isUrgent: true,
+                    ),
+                    const SizedBox(height: 16),
+                    const FaktoReminderCard(
+                      key: Key('administration-reminder-card'),
+                      dueLabel: 'En 2 días',
+                      serviceName: 'Administración',
+                      amount: r'$ 450.000',
+                    ),
+                    if (FaktoAppScope.of(context).capturedReminder
+                        case final Reminder capturedReminder) ...<Widget>[
+                      const SizedBox(height: 16),
+                      FaktoReminderCard(
+                        key: const Key('captured-reminder-card'),
+                        dueLabel: _formatDueLabel(capturedReminder.dueDate),
+                        serviceName: capturedReminder.issuer,
+                        amount: formatPesos(capturedReminder.amountCents),
+                      ),
+                    ],
                   ],
-                ],
+                ),
+              ),
+            ),
+            bottomNavigationBar: ColoredBox(
+              color: AppColors.surface,
+              child: SafeArea(
+                top: false,
+                child: FaktoBottomNavigationBar(onAddPressed: _openCaptureMenu),
               ),
             ),
           ),
-          bottomNavigationBar: ColoredBox(
-            color: AppColors.surface,
-            child: SafeArea(
-              top: false,
-              child: FaktoBottomNavigationBar(onAddPressed: _openCaptureMenu),
+          if (_isCaptureMenuMounted)
+            Positioned.fill(
+              child: CaptureMenuOverlay(
+                animation: _captureMenuController,
+                isClosing: _isCaptureMenuClosing,
+                onDismiss: () {
+                  _dismissCaptureMenu();
+                },
+                onRecordAudio: _goToAudio,
+                onTakePhoto: () {
+                  _goToCamera();
+                },
+              ),
             ),
-          ),
-        ),
-        if (_isCaptureMenuMounted)
-          Positioned.fill(
-            child: CaptureMenuOverlay(
-              animation: _captureMenuController,
-              isClosing: _isCaptureMenuClosing,
-              onDismiss: () {
-                _dismissCaptureMenu();
-              },
-              onRecordAudio: _goToAudio,
-              onTakePhoto: () {
-                _goToCamera();
-              },
-            ),
-          ),
-      ],
+        ],
+      ),
     ),
   );
 
@@ -164,6 +168,10 @@ class _HomePageState extends State<HomePage>
       _isCaptureMenuMounted = false;
       _isCaptureMenuClosing = false;
     });
+  }
+
+  void _handleSystemBack(bool didPop, Object? result) {
+    if (!didPop && _isCaptureMenuMounted) _dismissCaptureMenu();
   }
 
   Future<void> _goToCamera() async {
