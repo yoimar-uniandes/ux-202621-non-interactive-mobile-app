@@ -1,4 +1,5 @@
 import 'package:fakto_mobile/design/app_colors.dart';
+import 'package:fakto_mobile/features/capture/presentation/audio_capture_page.dart';
 import 'package:fakto_mobile/features/capture/presentation/camera_capture_page.dart';
 import 'package:fakto_mobile/features/home/presentation/home_page.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class ReadSummaryPage extends StatelessWidget {
-  const ReadSummaryPage({super.key});
+  const ReadSummaryPage({this.isFromAudio = false, super.key});
 
   static const routeName = 'read-summary';
   static const routePath = '/capture/read-summary';
+
+  final bool isFromAudio;
 
   @override
   Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
@@ -40,7 +43,7 @@ class ReadSummaryPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
-              const _ReadPhotoCard(),
+              isFromAudio ? const _ReadAudioCard() : const _ReadPhotoCard(),
               const SizedBox(height: 16),
               const _ReadField(label: 'Emisor', value: 'EPM'),
               const SizedBox(height: 16),
@@ -55,7 +58,11 @@ class ReadSummaryPage extends StatelessWidget {
                   Expanded(
                     child: _SummaryButton(
                       label: 'Corregir',
-                      onPressed: () => context.go(CameraCapturePage.routePath),
+                      onPressed: () => context.go(
+                        isFromAudio
+                            ? AudioCapturePage.routePath
+                            : CameraCapturePage.routePath,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -215,6 +222,36 @@ class _SummaryButton extends StatelessWidget {
           ),
         ),
       ),
+    ),
+  );
+}
+
+class _ReadAudioCard extends StatelessWidget {
+  const _ReadAudioCard();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const Key('read-audio-card'),
+    width: double.infinity,
+    padding: const EdgeInsets.fromLTRB(15, 14, 15, 14),
+    decoration: BoxDecoration(
+      color: AppColors.info100,
+      border: Border.all(color: AppColors.secondary900),
+      borderRadius: BorderRadius.circular(4),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Nota de voz · 00:12 · grabada hoy',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '«EPM, ochocientos mil pesos, vence el veintiocho de septiembre.»',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
     ),
   );
 }

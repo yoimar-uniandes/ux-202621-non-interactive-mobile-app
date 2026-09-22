@@ -20,7 +20,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: ReadSummaryPage.routePath,
       name: ReadSummaryPage.routeName,
-      builder: (context, state) => const ReadSummaryPage(),
+      builder: (context, state) => ReadSummaryPage(
+        isFromAudio: state.uri.queryParameters['source'] == 'audio',
+      ),
     ),
     GoRoute(
       path: AudioCapturePage.routePath,

@@ -62,6 +62,21 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('audio-capture-page')), findsNothing);
+    expect(find.byKey(const Key('read-audio-card')), findsOneWidget);
+    expect(find.text('Nota de voz · 00:12 · grabada hoy'), findsOneWidget);
+    expect(
+      find.text('«EPM, ochocientos mil pesos, vence el veintiocho de septiembre.»'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const Key('corregir-read-summary-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('audio-capture-page')), findsOneWidget);
+    expect(find.byKey(const Key('camera-capture-page')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('audio-close-button')));
+    await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
 }

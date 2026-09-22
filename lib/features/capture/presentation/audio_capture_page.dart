@@ -1,4 +1,5 @@
 import 'package:fakto_mobile/design/app_colors.dart';
+import 'package:fakto_mobile/features/capture/presentation/read_summary_page.dart';
 import 'package:fakto_mobile/features/home/presentation/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -106,14 +107,21 @@ class AudioCapturePage extends StatelessWidget {
                     shape: const CircleBorder(),
                     child: InkWell(
                       key: const Key('audio-stop-button'),
-                      onTap: () => context.go(HomePage.routePath),
+                      onTap: () => context.go(
+                        '${ReadSummaryPage.routePath}?source=audio',
+                      ),
                       customBorder: const CircleBorder(),
-                      child: const SizedBox.square(
-                        dimension: 72,
-                        child: Icon(
-                          Icons.stop,
-                          size: 28,
-                          color: AppColors.secondary900,
+                      child: const DecoratedBox(
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: SizedBox.square(
+                          dimension: 72,
+                          child: Center(
+                            child: Icon(
+                              Icons.stop,
+                              size: 28,
+                              color: AppColors.secondary900,
+                            ),
+                          ),
                         ),
                       ),
                     ),
