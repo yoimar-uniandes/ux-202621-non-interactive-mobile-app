@@ -13,7 +13,7 @@ void main() {
   });
 
   test(
-    'adds the selected photo batch exactly once and updates the summary',
+    'sets the selected photo batch exactly once and updates the summary',
     () {
       final appState = FaktoAppState();
       final initialSummary = appState.monthlySummary;
@@ -25,7 +25,7 @@ void main() {
       expect(appState.confirmSelectedBatch(), isFalse);
       expect(appState.monthlySummary.totalCents, 205000000);
       expect(appState.monthlySummary.pendingCents, 205000000);
-      expect(appState.reminders, hasLength(3));
+      expect(appState.capturedReminder?.issuer, 'EPM');
       expect(
         appState.monthlySummary.totalCents,
         greaterThan(initialSummary.totalCents),
@@ -42,4 +42,20 @@ void main() {
     appState.confirmSelectedBatch();
     expect(appState.selectNextBatch(CaptureSource.audio).id, 'audio-1');
   });
+
+  test(
+    'replaces the captured card instead of accumulating previous captures',
+    () {
+      final appState = FaktoAppState();
+
+      appState.selectNextBatch(CaptureSource.photo);
+      appState.confirmSelectedBatch();
+      appState.selectNextBatch(CaptureSource.audio);
+      appState.confirmSelectedBatch();
+
+      expect(appState.capturedReminder?.issuer, 'Internet');
+      expect(appState.monthlySummary.totalCents, 137000000);
+      expect(appState.monthlySummary.pendingCents, 137000000);
+    },
+  );
 }

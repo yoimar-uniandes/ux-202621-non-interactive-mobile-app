@@ -1,10 +1,8 @@
-import 'dart:collection';
-
 import 'package:fakto_mobile/features/reminders/domain/reminder.dart';
 import 'package:flutter/foundation.dart';
 
 class FaktoAppState extends ChangeNotifier {
-  FaktoAppState() : _reminders = List<Reminder>.of(_initialReminders);
+  FaktoAppState();
 
   static const _carriedOverCents = 12000000;
 
@@ -91,26 +89,29 @@ class FaktoAppState extends ChangeNotifier {
         ],
       };
 
-  final List<Reminder> _reminders;
   final Map<CaptureSource, int> _nextBatchIndex = <CaptureSource, int>{
     CaptureSource.photo: 0,
     CaptureSource.audio: 0,
   };
 
   CaptureBatch? _selectedBatch;
+  Reminder? _capturedReminder;
   int _confirmationNumber = 0;
-
-  UnmodifiableListView<Reminder> get reminders =>
-      UnmodifiableListView(_reminders);
 
   CaptureBatch? get selectedBatch => _selectedBatch;
 
+  Reminder? get capturedReminder => _capturedReminder;
+
   MonthlySummary get monthlySummary {
-    final totalCents = _reminders.fold<int>(
+    final reminders = <Reminder>[
+      ..._initialReminders,
+      ?_capturedReminder,
+    ];
+    final totalCents = reminders.fold<int>(
       0,
       (total, reminder) => total + reminder.amountCents,
     );
-    final paidCents = _reminders
+    final paidCents = reminders
         .where((reminder) => reminder.isPaid)
         .fold<int>(0, (total, reminder) => total + reminder.amountCents);
 
@@ -137,10 +138,8 @@ class FaktoAppState extends ChangeNotifier {
     if (batch == null) return false;
 
     _confirmationNumber += 1;
-    _reminders.addAll(
-      batch.reminders.map(
-        (reminder) => reminder.withId('${reminder.id}-$_confirmationNumber'),
-      ),
+    _capturedReminder = batch.reminders.single.withId(
+      '${batch.id}-$_confirmationNumber',
     );
     _nextBatchIndex[batch.source] = _nextBatchIndex[batch.source]! + 1;
     _selectedBatch = null;

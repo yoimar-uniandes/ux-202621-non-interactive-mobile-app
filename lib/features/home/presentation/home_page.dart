@@ -6,6 +6,7 @@ import 'package:fakto_mobile/features/capture/presentation/camera_capture_page.d
 import 'package:fakto_mobile/features/capture/presentation/audio_capture_page.dart';
 import 'package:fakto_mobile/features/capture/presentation/widgets/capture_menu_overlay.dart';
 import 'package:fakto_mobile/features/home/presentation/widgets/monthly_summary_card.dart';
+import 'package:fakto_mobile/features/reminders/domain/reminder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -91,6 +92,16 @@ class _HomePageState extends State<HomePage>
                     serviceName: 'Administración',
                     amount: r'$ 450.000',
                   ),
+                  if (FaktoAppScope.of(context).capturedReminder
+                      case final Reminder capturedReminder) ...<Widget>[
+                    const SizedBox(height: 16),
+                    FaktoReminderCard(
+                      key: const Key('captured-reminder-card'),
+                      dueLabel: _formatDueLabel(capturedReminder.dueDate),
+                      serviceName: capturedReminder.issuer,
+                      amount: formatPesos(capturedReminder.amountCents),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -168,4 +179,6 @@ class _HomePageState extends State<HomePage>
   bool get _prefersReducedMotion =>
       MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
+  String _formatDueLabel(DateTime dueDate) =>
+      'Vence el ${dueDate.day.toString().padLeft(2, '0')}/${dueDate.month.toString().padLeft(2, '0')}/${dueDate.year}';
 }
