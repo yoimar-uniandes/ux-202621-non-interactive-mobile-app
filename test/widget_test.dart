@@ -34,7 +34,14 @@ void main() {
       const Size.square(72),
     );
 
-    await tester.tap(find.byKey(const Key('camera-close-button')));
+    await tester.tap(find.byKey(const Key('camera-shutter-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('read-photo-card')), findsOneWidget);
+    expect(find.text('Revisa lo que leímos'), findsOneWidget);
+    expect(find.text('factura-epm-septiembre.jpg'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('read-summary-close-button')));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('camera-capture-page')), findsNothing);

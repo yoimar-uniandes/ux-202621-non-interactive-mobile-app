@@ -1,4 +1,5 @@
 import 'package:fakto_mobile/design/app_colors.dart';
+import 'package:fakto_mobile/features/capture/presentation/read_summary_page.dart';
 import 'package:fakto_mobile/features/home/presentation/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -113,7 +114,7 @@ class CameraCapturePage extends StatelessWidget {
                       shape: const CircleBorder(),
                       child: InkWell(
                         key: const Key('camera-shutter-button'),
-                        onTap: _simulateShutter,
+                        onTap: () => context.go(ReadSummaryPage.routePath),
                         customBorder: const CircleBorder(),
                         child: SizedBox.square(
                           dimension: 72,
@@ -134,7 +135,6 @@ class CameraCapturePage extends StatelessWidget {
     ),
   );
 
-  static void _simulateShutter() {}
 }
 
 class _FramingGuide extends StatelessWidget {
