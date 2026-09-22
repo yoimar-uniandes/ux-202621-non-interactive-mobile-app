@@ -1,3 +1,4 @@
+import 'package:fakto_mobile/app/fakto_app_scope.dart';
 import 'package:fakto_mobile/design/app_colors.dart';
 import 'package:fakto_mobile/design/widgets/fakto_bottom_navigation_bar.dart';
 import 'package:fakto_mobile/design/widgets/fakto_reminder_card.dart';
@@ -67,7 +68,9 @@ class _HomePageState extends State<HomePage>
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 24),
-                  const MonthlySummaryCard(),
+                  MonthlySummaryCard(
+                    summary: FaktoAppScope.of(context).monthlySummary,
+                  ),
                   const SizedBox(height: 24),
                   Text(
                     'Recordatorios',

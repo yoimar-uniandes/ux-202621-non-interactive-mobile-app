@@ -1,8 +1,11 @@
 import 'package:fakto_mobile/design/app_colors.dart';
+import 'package:fakto_mobile/features/reminders/domain/reminder.dart';
 import 'package:flutter/material.dart';
 
 class MonthlySummaryCard extends StatelessWidget {
-  const MonthlySummaryCard({super.key});
+  const MonthlySummaryCard({required this.summary, super.key});
+
+  final MonthlySummary summary;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class MonthlySummaryCard extends StatelessWidget {
             style: textTheme.bodyMedium?.copyWith(color: Colors.white),
           ),
           Text(
-            r'$ 1.250.000',
+            formatPesos(summary.totalCents),
             maxLines: 1,
             overflow: TextOverflow.clip,
             style: textTheme.displayMedium?.copyWith(color: Colors.white),
@@ -34,23 +37,26 @@ class MonthlySummaryCard extends StatelessWidget {
           const SizedBox(height: 16),
           const Divider(height: 1, thickness: 1, color: AppColors.neutral300),
           const SizedBox(height: 15),
-          const Row(
+          Row(
             children: <Widget>[
               Expanded(
                 child: _SummaryMetric(
                   label: 'Pendiente',
-                  value: r'$ 1.250.000',
+                  value: formatPesos(summary.pendingCents),
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
-                child: _SummaryMetric(label: 'Pagado', value: r'$ 0'),
+                child: _SummaryMetric(
+                  label: 'Pagado',
+                  value: formatPesos(summary.paidCents),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Text(
-            r'Incluye $ 120.000 arrastrados del mes anterior.',
+            'Incluye ${formatPesos(summary.carriedOverCents)} arrastrados del mes anterior.',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: textTheme.bodySmall?.copyWith(color: Colors.white),

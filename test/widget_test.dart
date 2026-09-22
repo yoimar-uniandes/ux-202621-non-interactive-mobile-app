@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('keeps totals stable and reaches MOV-24 from the capture menu', (
+  testWidgets('keeps totals stable before confirmation and reaches MOV-24 from the capture menu', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(360, 800));
