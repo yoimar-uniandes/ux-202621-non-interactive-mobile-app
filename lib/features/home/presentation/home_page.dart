@@ -2,6 +2,7 @@ import 'package:fakto_mobile/design/app_colors.dart';
 import 'package:fakto_mobile/design/widgets/fakto_bottom_navigation_bar.dart';
 import 'package:fakto_mobile/design/widgets/fakto_reminder_card.dart';
 import 'package:fakto_mobile/features/capture/presentation/camera_capture_page.dart';
+import 'package:fakto_mobile/features/capture/presentation/audio_capture_page.dart';
 import 'package:fakto_mobile/features/capture/presentation/widgets/capture_menu_overlay.dart';
 import 'package:fakto_mobile/features/home/presentation/widgets/monthly_summary_card.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,7 @@ class _HomePageState extends State<HomePage>
               onDismiss: () {
                 _dismissCaptureMenu();
               },
-              onRecordAudio: _simulateRecordAudio,
+              onRecordAudio: _goToAudio,
               onTakePhoto: () {
                 _goToCamera();
               },
@@ -156,8 +157,12 @@ class _HomePageState extends State<HomePage>
     if (mounted) context.go(CameraCapturePage.routePath);
   }
 
+  Future<void> _goToAudio() async {
+    await _dismissCaptureMenu();
+    if (mounted) context.go(AudioCapturePage.routePath);
+  }
+
   bool get _prefersReducedMotion =>
       MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
-  void _simulateRecordAudio() {}
 }

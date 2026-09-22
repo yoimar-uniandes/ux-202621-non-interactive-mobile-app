@@ -46,6 +46,22 @@ void main() {
 
     expect(find.byKey(const Key('camera-capture-page')), findsNothing);
     expect(find.text('Hola, Claudia'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('add-reminder-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('record-audio-option')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('audio-capture-page')), findsOneWidget);
+    expect(find.text('Grabando...'), findsOneWidget);
+    expect(find.text('00:12'), findsOneWidget);
+    expect(find.text('Di el emisor, el valor y la fecha límite.'), findsOneWidget);
+    expect(find.byKey(const Key('audio-stop-button')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('audio-stop-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('audio-capture-page')), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }
