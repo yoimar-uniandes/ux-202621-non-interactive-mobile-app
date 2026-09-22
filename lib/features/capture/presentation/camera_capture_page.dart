@@ -1,6 +1,8 @@
+import 'package:fakto_mobile/app/fakto_app_scope.dart';
 import 'package:fakto_mobile/design/app_colors.dart';
 import 'package:fakto_mobile/features/capture/presentation/read_summary_page.dart';
 import 'package:fakto_mobile/features/home/presentation/home_page.dart';
+import 'package:fakto_mobile/features/reminders/domain/reminder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,7 +41,10 @@ class CameraCapturePage extends StatelessWidget {
                     ),
                     child: InkWell(
                       key: const Key('camera-close-button'),
-                      onTap: () => context.go(HomePage.routePath),
+                      onTap: () {
+                        FaktoAppScope.of(context).discardSelectedBatch();
+                        context.go(HomePage.routePath);
+                      },
                       customBorder: const CircleBorder(),
                       child: SizedBox.square(
                         dimension: 48,
@@ -114,7 +119,11 @@ class CameraCapturePage extends StatelessWidget {
                       shape: const CircleBorder(),
                       child: InkWell(
                         key: const Key('camera-shutter-button'),
-                        onTap: () => context.go(ReadSummaryPage.routePath),
+                        onTap: () {
+                          FaktoAppScope.of(context)
+                              .selectNextBatch(CaptureSource.photo);
+                          context.go(ReadSummaryPage.routePath);
+                        },
                         customBorder: const CircleBorder(),
                         child: SizedBox.square(
                           dimension: 72,
@@ -134,7 +143,6 @@ class CameraCapturePage extends StatelessWidget {
       ),
     ),
   );
-
 }
 
 class _FramingGuide extends StatelessWidget {
