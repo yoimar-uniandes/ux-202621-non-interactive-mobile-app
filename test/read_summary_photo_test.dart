@@ -68,7 +68,7 @@ void main() {
 
     expect(find.byKey(const Key('captured-reminder-card')), findsOneWidget);
 
-    expect(find.text(r'$ 2.050.000'), findsNWidgets(2));
+    expect(find.text(r'$ 2.050.000'), findsOneWidget);
 
     expect(appState.selectedBatch, isNull);
 
@@ -171,7 +171,6 @@ Widget _app(FaktoAppState appState, GoRouter router) => FaktoAppScope(
   child: MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
 
 );
-
 
 
 GoRouter _buildRouter() => GoRouter(

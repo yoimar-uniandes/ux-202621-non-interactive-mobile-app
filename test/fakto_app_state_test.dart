@@ -7,8 +7,8 @@ void main() {
     final appState = FaktoAppState();
 
     expect(appState.monthlySummary.totalCents, 125000000);
-    expect(appState.monthlySummary.pendingCents, 125000000);
-    expect(appState.monthlySummary.paidCents, 0);
+    expect(appState.monthlySummary.pendingCents, 80000000);
+    expect(appState.monthlySummary.paidCents, 45000000);
     expect(appState.monthlySummary.carriedOverCents, 12000000);
   });
 
@@ -24,7 +24,7 @@ void main() {
       expect(appState.confirmSelectedBatch(), isTrue);
       expect(appState.confirmSelectedBatch(), isFalse);
       expect(appState.monthlySummary.totalCents, 205000000);
-      expect(appState.monthlySummary.pendingCents, 205000000);
+      expect(appState.monthlySummary.pendingCents, 160000000);
       expect(appState.capturedReminder?.issuer, 'EPM');
       expect(
         appState.monthlySummary.totalCents,
@@ -55,7 +55,7 @@ void main() {
 
       expect(appState.capturedReminder?.issuer, 'Internet');
       expect(appState.monthlySummary.totalCents, 137000000);
-      expect(appState.monthlySummary.pendingCents, 137000000);
+      expect(appState.monthlySummary.pendingCents, 92000000);
     },
   );
 }

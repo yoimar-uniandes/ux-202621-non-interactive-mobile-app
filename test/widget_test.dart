@@ -17,16 +17,18 @@ void main() {
       await tester.pumpWidget(const FaktoApp());
 
       expect(find.byKey(const Key('camera-capture-page')), findsNothing);
-      expect(find.text(r'$ 1.250.000'), findsNWidgets(2));
-      expect(find.text(r'$ 0'), findsOneWidget);
+      expect(find.text(r'$ 1.250.000'), findsOneWidget);
+      expect(find.text(r'$ 450.000'), findsNWidgets(2));
+      expect(find.text(r'$ 800.000'), findsNWidgets(2));
 
       await tester.tap(find.byKey(const Key('add-reminder-button')));
       await tester.pumpAndSettle();
 
       expect(find.text('Grabar audio'), findsOneWidget);
       expect(find.text('Tomar foto'), findsOneWidget);
-      expect(find.text(r'$ 1.250.000'), findsNWidgets(2));
-      expect(find.text(r'$ 0'), findsOneWidget);
+      expect(find.text(r'$ 1.250.000'), findsOneWidget);
+      expect(find.text(r'$ 450.000'), findsNWidgets(2));
+      expect(find.text(r'$ 800.000'), findsNWidgets(2));
 
       await tester.tap(find.byKey(const Key('take-photo-option')));
       await tester.pumpAndSettle();
@@ -114,7 +116,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const Key('captured-reminder-card')), findsOneWidget);
-      expect(find.text(r'$ 2.050.000'), findsNWidgets(2));
+      expect(find.text(r'$ 2.050.000'), findsOneWidget);
 
       appState.selectNextBatch(CaptureSource.audio);
       appState.confirmSelectedBatch();
@@ -122,7 +124,7 @@ void main() {
 
       expect(find.byKey(const Key('captured-reminder-card')), findsOneWidget);
       expect(find.text('Internet'), findsOneWidget);
-      expect(find.text(r'$ 1.370.000'), findsNWidgets(2));
+      expect(find.text(r'$ 1.370.000'), findsOneWidget);
     },
   );
 }

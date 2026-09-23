@@ -39,10 +39,10 @@ void main() {
       expect(find.text('Hola, Claudia'), findsOneWidget);
       expect(find.byKey(const Key('captured-reminder-card')), findsOneWidget);
       expect(find.text('Internet'), findsOneWidget);
-      expect(find.text(r'$ 1.370.000'), findsNWidgets(2));
+      expect(find.text(r'$ 1.370.000'), findsOneWidget);
       expect(appState.selectedBatch, isNull);
       expect(appState.capturedReminder?.issuer, 'Internet');
-      expect(appState.monthlySummary.pendingCents, 137000000);
+      expect(appState.monthlySummary.pendingCents, 92000000);
     },
   );
 

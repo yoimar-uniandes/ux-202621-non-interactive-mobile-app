@@ -41,15 +41,15 @@ class MonthlySummaryCard extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: _SummaryMetric(
-                  label: 'Pendiente',
-                  value: formatPesos(summary.pendingCents),
+                  label: 'Pagado',
+                  value: formatPesos(summary.paidCents),
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: _SummaryMetric(
-                  label: 'Pagado',
-                  value: formatPesos(summary.paidCents),
+                  label: 'Pendiente',
+                  value: formatPesos(summary.pendingCents),
                 ),
               ),
             ],

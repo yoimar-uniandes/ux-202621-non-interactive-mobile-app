@@ -34,6 +34,6 @@ void main() {
     expect(appState.selectedBatch, isNull);
     expect(appState.capturedReminder, isNull);
     expect(appState.monthlySummary.totalCents, 125000000);
-    expect(appState.monthlySummary.pendingCents, 125000000);
+    expect(appState.monthlySummary.pendingCents, 80000000);
   });
 }

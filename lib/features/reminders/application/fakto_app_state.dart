@@ -22,6 +22,7 @@ class FaktoAppState extends ChangeNotifier {
       amountCents: 45000000,
       dueDate: DateTime(2026, 9, 24),
       source: CaptureSource.audio,
+      isPaid: true,
     ),
   ];
 
@@ -103,10 +104,7 @@ class FaktoAppState extends ChangeNotifier {
   Reminder? get capturedReminder => _capturedReminder;
 
   MonthlySummary get monthlySummary {
-    final reminders = <Reminder>[
-      ..._initialReminders,
-      ?_capturedReminder,
-    ];
+    final reminders = <Reminder>[..._initialReminders, ?_capturedReminder];
     final totalCents = reminders.fold<int>(
       0,
       (total, reminder) => total + reminder.amountCents,
