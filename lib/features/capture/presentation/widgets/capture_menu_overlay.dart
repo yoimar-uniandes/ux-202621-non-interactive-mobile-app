@@ -42,6 +42,7 @@ class CaptureMenuOverlay extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final horizontalOrigin = constraints.maxWidth / 2 - 88;
+            final optionWidth = constraints.maxWidth - horizontalOrigin;
             final safeBottom = MediaQuery.paddingOf(context).bottom;
 
             return Stack(
@@ -81,7 +82,7 @@ class CaptureMenuOverlay extends StatelessWidget {
                           child: _CaptureOption(
                             key: const Key('record-audio-option'),
                             circleKey: const Key('record-audio-icon'),
-                            width: 153,
+                            width: optionWidth,
                             label: 'Grabar audio',
                             icon: Icons.mic_none,
                             onTap: onRecordAudio,
@@ -97,7 +98,7 @@ class CaptureMenuOverlay extends StatelessWidget {
                           child: _CaptureOption(
                             key: const Key('take-photo-option'),
                             circleKey: const Key('take-photo-icon'),
-                            width: 142,
+                            width: optionWidth,
                             label: 'Tomar foto',
                             icon: Icons.photo_camera_outlined,
                             onTap: onTakePhoto,

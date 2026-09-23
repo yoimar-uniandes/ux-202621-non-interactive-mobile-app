@@ -1,3 +1,4 @@
+import 'package:fakto_mobile/app/fakto_app.dart';
 import 'package:fakto_mobile/app/fakto_app_scope.dart';
 import 'package:fakto_mobile/design/app_theme.dart';
 import 'package:fakto_mobile/features/home/presentation/home_page.dart';
@@ -35,5 +36,25 @@ void main() {
     expect(appState.capturedReminder, isNull);
     expect(appState.monthlySummary.totalCents, 125000000);
     expect(appState.monthlySummary.pendingCents, 80000000);
+  });
+
+  testWidgets('keeps the full capture-option row tappable', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(360, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(const FaktoApp());
+
+    await tester.tap(find.byKey(const Key('add-reminder-button')));
+    await tester.pumpAndSettle();
+
+    final audioOption = tester.getRect(
+      find.byKey(const Key('record-audio-option')),
+    );
+    expect(audioOption.right, 360);
+
+    await tester.tapAt(Offset(audioOption.right - 4, audioOption.center.dy));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Grabando...'), findsOneWidget);
   });
 }
