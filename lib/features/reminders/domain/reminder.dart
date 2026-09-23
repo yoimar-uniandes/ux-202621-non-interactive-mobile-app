@@ -35,11 +35,13 @@ class CaptureBatch {
     required this.id,
     required this.source,
     required this.reminders,
+    required this.sourceReference,
   });
 
   final String id;
   final CaptureSource source;
   final List<Reminder> reminders;
+  final String sourceReference;
 }
 
 class MonthlySummary {

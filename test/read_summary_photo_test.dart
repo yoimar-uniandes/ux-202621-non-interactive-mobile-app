@@ -144,7 +144,7 @@ void main() {
 
     await tester.pumpWidget(_app(appState, router));
 
-    await tester.tap(find.byKey(const Key('read-summary-close-button')));
+    await tester.binding.handlePopRoute();
 
     await tester.pumpAndSettle();
 

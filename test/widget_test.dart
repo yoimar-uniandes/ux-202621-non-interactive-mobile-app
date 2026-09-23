@@ -48,7 +48,7 @@ void main() {
       expect(find.text('Revisa lo que leímos'), findsOneWidget);
       expect(find.text('factura-epm-septiembre.jpg'), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('read-summary-close-button')));
+      await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('camera-capture-page')), findsNothing);
@@ -76,7 +76,7 @@ void main() {
       expect(find.text('Nota de voz · 00:12 · grabada hoy'), findsOneWidget);
       expect(
         find.text(
-          '«EPM, ochocientos mil pesos, vence el veintiocho de septiembre.»',
+          '«Internet hogar, ciento veinte mil pesos, vence el dos de octubre.»',
         ),
         findsOneWidget,
       );
@@ -104,10 +104,10 @@ void main() {
       appState.confirmSelectedBatch();
 
       await tester.pumpWidget(
-      FaktoAppScope(
-        notifier: appState,
-        child: MaterialApp(theme: buildAppTheme(), home: const HomePage()),
-      ),
+        FaktoAppScope(
+          notifier: appState,
+          child: MaterialApp(theme: buildAppTheme(), home: const HomePage()),
+        ),
       );
 
       expect(find.byKey(const Key('epm-reminder-card')), findsOneWidget);

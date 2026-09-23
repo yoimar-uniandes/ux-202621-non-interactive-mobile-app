@@ -32,6 +32,7 @@ class FaktoAppState extends ChangeNotifier {
           CaptureBatch(
             id: 'photo-1',
             source: CaptureSource.photo,
+            sourceReference: 'factura-epm-septiembre.jpg',
             reminders: <Reminder>[
               Reminder(
                 id: 'photo-1-invoice-1',
@@ -46,6 +47,7 @@ class FaktoAppState extends ChangeNotifier {
           CaptureBatch(
             id: 'photo-2',
             source: CaptureSource.photo,
+            sourceReference: 'factura-acueducto-septiembre.jpg',
             reminders: <Reminder>[
               Reminder(
                 id: 'photo-2-invoice-1',
@@ -62,6 +64,8 @@ class FaktoAppState extends ChangeNotifier {
           CaptureBatch(
             id: 'audio-1',
             source: CaptureSource.audio,
+            sourceReference:
+                '«Internet hogar, ciento veinte mil pesos, vence el dos de octubre.»',
             reminders: <Reminder>[
               Reminder(
                 id: 'audio-1-invoice-1',
@@ -76,6 +80,8 @@ class FaktoAppState extends ChangeNotifier {
           CaptureBatch(
             id: 'audio-2',
             source: CaptureSource.audio,
+            sourceReference:
+                '«Gas natural, noventa y cinco mil pesos, vence el cinco de octubre.»',
             reminders: <Reminder>[
               Reminder(
                 id: 'audio-2-invoice-1',

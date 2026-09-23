@@ -26,90 +26,102 @@ class ReadSummaryPage extends StatelessWidget {
         ? selectedBatch.reminders.single
         : null;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: AppColors.canvas,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-      child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _CloseButton(
-                  onPressed: () {
-                    appState.discardSelectedBatch();
-                    context.go(HomePage.routePath);
-                  },
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Revisa lo que leímos',
-                  style: Theme.of(context).textTheme.headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Confirma o corrige los datos antes de crear el recordatorio.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                isFromAudio ? const _ReadAudioCard() : const _ReadPhotoCard(),
-                const SizedBox(height: 16),
-                _ReadField(
-                  label: 'Emisor',
-                  value: selectedReminder?.issuer ?? 'EPM',
-                ),
-                const SizedBox(height: 16),
-                _ReadField(
-                  label: 'Concepto',
-                  value: selectedReminder?.concept ?? 'Servicio público',
-                ),
-                const SizedBox(height: 16),
-                _ReadField(
-                  label: 'Valor',
-                  value: selectedReminder == null
-                      ? r'$ 800.000'
-                      : formatPesos(selectedReminder.amountCents),
-                ),
-                const SizedBox(height: 16),
-                _ReadField(
-                  label: 'Fecha límite',
-                  value: selectedReminder == null
-                      ? '28/09/2026'
-                      : _formatDate(selectedReminder.dueDate),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: _SummaryButton(
-                        label: 'Corregir',
-                        onPressed: () => context.go(
-                          isFromAudio
-                              ? AudioCapturePage.routePath
-                              : CameraCapturePage.routePath,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          appState.discardSelectedBatch();
+          context.go(HomePage.routePath);
+        }
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: AppColors.canvas,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+        child: Scaffold(
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Revisa lo que leímos',
+                    style: Theme.of(context).textTheme.headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Confirma o corrige los datos antes de crear el recordatorio.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  isFromAudio
+                      ? _ReadAudioCard(
+                          transcript:
+                              selectedBatch?.sourceReference ??
+                              _ReadAudioCard.fallbackTranscript,
+                        )
+                      : _ReadPhotoCard(
+                          fileName:
+                              selectedBatch?.sourceReference ??
+                              _ReadPhotoCard.fallbackFileName,
+                        ),
+                  const SizedBox(height: 16),
+                  _ReadField(
+                    label: 'Emisor',
+                    value: selectedReminder?.issuer ?? 'EPM',
+                  ),
+                  const SizedBox(height: 16),
+                  _ReadField(
+                    label: 'Concepto',
+                    value: selectedReminder?.concept ?? 'Servicio público',
+                  ),
+                  const SizedBox(height: 16),
+                  _ReadField(
+                    label: 'Valor',
+                    value: selectedReminder == null
+                        ? r'$ 800.000'
+                        : formatPesos(selectedReminder.amountCents),
+                  ),
+                  const SizedBox(height: 16),
+                  _ReadField(
+                    label: 'Fecha límite',
+                    value: selectedReminder == null
+                        ? '28/09/2026'
+                        : _formatDate(selectedReminder.dueDate),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: _SummaryButton(
+                          label: 'Corregir',
+                          onPressed: () => context.go(
+                            isFromAudio
+                                ? AudioCapturePage.routePath
+                                : CameraCapturePage.routePath,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _SummaryButton(
-                        label: 'Confirmar',
-                        isPrimary: true,
-                        onPressed: () {
-                          appState.confirmSelectedBatch();
-                          context.go(HomePage.routePath);
-                        },
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _SummaryButton(
+                          label: 'Confirmar',
+                          isPrimary: true,
+                          onPressed: () {
+                            appState.confirmSelectedBatch();
+                            context.go(HomePage.routePath);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -121,33 +133,12 @@ class ReadSummaryPage extends StatelessWidget {
       '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 }
 
-class _CloseButton extends StatelessWidget {
-  const _CloseButton({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    label: 'Cerrar revisión',
-    child: Material(
-      color: AppColors.surface,
-      shape: const CircleBorder(side: BorderSide(color: AppColors.neutral500)),
-      child: InkWell(
-        key: const Key('read-summary-close-button'),
-        onTap: onPressed,
-        customBorder: const CircleBorder(),
-        child: const SizedBox.square(
-          dimension: 48,
-          child: Icon(Icons.close, size: 24, color: AppColors.textPrimary),
-        ),
-      ),
-    ),
-  );
-}
-
 class _ReadPhotoCard extends StatelessWidget {
-  const _ReadPhotoCard();
+  const _ReadPhotoCard({required this.fileName});
+
+  static const fallbackFileName = 'factura-epm-septiembre.jpg';
+
+  final String fileName;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -183,7 +174,7 @@ class _ReadPhotoCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               Text(
-                'factura-epm-septiembre.jpg',
+                fileName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -263,7 +254,12 @@ class _SummaryButton extends StatelessWidget {
 }
 
 class _ReadAudioCard extends StatelessWidget {
-  const _ReadAudioCard();
+  const _ReadAudioCard({required this.transcript});
+
+  static const fallbackTranscript =
+      '«EPM, ochocientos mil pesos, vence el veintiocho de septiembre.»';
+
+  final String transcript;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -283,10 +279,7 @@ class _ReadAudioCard extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(height: 8),
-        Text(
-          '«EPM, ochocientos mil pesos, vence el veintiocho de septiembre.»',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        Text(transcript, style: Theme.of(context).textTheme.bodyMedium),
       ],
     ),
   );

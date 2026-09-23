@@ -79,7 +79,7 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(_app(appState, router));
-    await tester.tap(find.byKey(const Key('read-summary-close-button')));
+    await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
 
     expect(find.text('Hola, Claudia'), findsOneWidget);
