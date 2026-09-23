@@ -1,7 +1,9 @@
+import 'package:fakto_mobile/app/fakto_app_scope.dart';
 import 'package:fakto_mobile/design/app_colors.dart';
 import 'package:fakto_mobile/features/capture/presentation/audio_capture_page.dart';
 import 'package:fakto_mobile/features/capture/presentation/camera_capture_page.dart';
 import 'package:fakto_mobile/features/home/presentation/home_page.dart';
+import 'package:fakto_mobile/features/reminders/domain/reminder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -15,72 +17,108 @@ class ReadSummaryPage extends StatelessWidget {
   final bool isFromAudio;
 
   @override
-  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
-    value: const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: AppColors.canvas,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-    child: Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _CloseButton(onPressed: () => context.go(HomePage.routePath)),
-              const SizedBox(height: 8),
-              Text(
-                'Revisa lo que leímos',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+  Widget build(BuildContext context) {
+    final appState = FaktoAppScope.of(context);
+    final source = isFromAudio ? CaptureSource.audio : CaptureSource.photo;
+    final selectedBatch = appState.selectedBatch;
+    final selectedReminder =
+        selectedBatch != null && selectedBatch.source == source
+        ? selectedBatch.reminders.single
+        : null;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: AppColors.canvas,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _CloseButton(
+                  onPressed: () {
+                    appState.discardSelectedBatch();
+                    context.go(HomePage.routePath);
+                  },
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Confirma o corrige los datos antes de crear el recordatorio.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 16),
-              isFromAudio ? const _ReadAudioCard() : const _ReadPhotoCard(),
-              const SizedBox(height: 16),
-              const _ReadField(label: 'Emisor', value: 'EPM'),
-              const SizedBox(height: 16),
-              const _ReadField(label: 'Concepto', value: 'Servicio público'),
-              const SizedBox(height: 16),
-              const _ReadField(label: 'Valor', value: r'$ 800.000'),
-              const SizedBox(height: 16),
-              const _ReadField(label: 'Fecha límite', value: '28/09/2026'),
-              const SizedBox(height: 16),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _SummaryButton(
-                      label: 'Corregir',
-                      onPressed: () => context.go(
-                        isFromAudio
-                            ? AudioCapturePage.routePath
-                            : CameraCapturePage.routePath,
+                const SizedBox(height: 8),
+                Text(
+                  'Revisa lo que leímos',
+                  style: Theme.of(context).textTheme.headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Confirma o corrige los datos antes de crear el recordatorio.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                isFromAudio ? const _ReadAudioCard() : const _ReadPhotoCard(),
+                const SizedBox(height: 16),
+                _ReadField(
+                  label: 'Emisor',
+                  value: selectedReminder?.issuer ?? 'EPM',
+                ),
+                const SizedBox(height: 16),
+                _ReadField(
+                  label: 'Concepto',
+                  value: selectedReminder?.concept ?? 'Servicio público',
+                ),
+                const SizedBox(height: 16),
+                _ReadField(
+                  label: 'Valor',
+                  value: selectedReminder == null
+                      ? r'$ 800.000'
+                      : formatPesos(selectedReminder.amountCents),
+                ),
+                const SizedBox(height: 16),
+                _ReadField(
+                  label: 'Fecha límite',
+                  value: selectedReminder == null
+                      ? '28/09/2026'
+                      : _formatDate(selectedReminder.dueDate),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: _SummaryButton(
+                        label: 'Corregir',
+                        onPressed: () => context.go(
+                          isFromAudio
+                              ? AudioCapturePage.routePath
+                              : CameraCapturePage.routePath,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _SummaryButton(
-                      label: 'Confirmar',
-                      isPrimary: true,
-                      onPressed: () => context.go(HomePage.routePath),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _SummaryButton(
+                        label: 'Confirmar',
+                        isPrimary: true,
+                        onPressed: () {
+                          appState.confirmSelectedBatch();
+                          context.go(HomePage.routePath);
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
+
+  String _formatDate(DateTime date) =>
+      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 }
 
 class _CloseButton extends StatelessWidget {
@@ -94,9 +132,7 @@ class _CloseButton extends StatelessWidget {
     label: 'Cerrar revisión',
     child: Material(
       color: AppColors.surface,
-      shape: const CircleBorder(
-        side: BorderSide(color: AppColors.neutral500),
-      ),
+      shape: const CircleBorder(side: BorderSide(color: AppColors.neutral500)),
       child: InkWell(
         key: const Key('read-summary-close-button'),
         onTap: onPressed,
